@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllOneAI Pro - Plataforma Profissional de IA</title>
+    <style>
+        :root {
+            --primary: #6e48aa;
+            --primary-dark: #4b2d7a;
+            --secondary: #9d50bb;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --pro-badge: linear-gradient(135deg, #ff8a00, #e52e71);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::after {
+            content: "PRO";
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: var(--pro-badge);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transform: rotate(15deg);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 25px;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .chat-container {
+            flex: 2.5;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .chat-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .chat-btn:hover {
+            background-color: rgba(110, 72, 170, 0.1);
+        }
+        
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            scroll-behavior: smooth;
+            background-color: #fafafa;
+            min-height: 400px;
+            max-height: calc(100vh - 300px);
+        }
+        
+        .message {
+            margin-bottom: 18px;
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 85%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+            position: relative;
+            line-height: 1.6;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .user-message {
+            background-color: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .ai-message {
+            background-color: #f1f1f1;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            display: block;
+            text-align: right;
+            margin-top: 8px;
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 12px;
+            position: relative;
+            margin-top: auto;
+        }
+        
+        #user-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 1.05rem;
+            outline: none;
+            transition: all 0.3s;
+            resize: none;
+            min-height: 60px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: white;
+        }
+        
+        #user-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(110, 72, 170, 0.15);
+        }
+        
+        #send-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 0 30px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        #send-button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        #send-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            height: calc(100vh - 200px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow-y: auto;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .model-selector {
+            margin-bottom: 20px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+            background-color: white;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+        
+        select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(110, 72, 170, 0.15);
+        }
+        
+        .model-info {
+            background-color: #f9f9f9;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            margin-top: 12px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .model-info strong {
+            color: var(--primary);
+            font-size: 1.05rem;
+        }
+        
+        .conversation-history {
+            margin-top: 20px;
+            max-height: 350px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        
+        .history-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        
+        .history-item:hover {
+            background-color: #f5f5f5;
+            transform: translateX(5px);
+        }
+        
+        .history-item.active {
+            background-color: rgba(110, 72, 170, 0.1);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .history-item strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .history-item small {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        .typing-indicator {
+            display: none;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            background-color: #f1f1f1;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+            max-width: 100px;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #666;
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .model-stats {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .stat-icon {
+            color: var(--primary);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .pro-feature {
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .pro-feature::before {
+            content: "★";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .chat-container, .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .chat-history {
+                max-height: 500px;
+            }
+            
+            .sidebar {
+                max-height: 400px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .chat-container {
+                height: calc(100vh - 180px);
+            }
+        }
+        
+        /* Dark mode */
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        
+        .dark-mode .chat-container,
+        .dark-mode .sidebar {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dark-mode .chat-history {
+            background-color: #252525;
+            border-color: #333;
+        }
+        
+        .dark-mode .ai-message {
+            background-color: #333;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+        
+        .dark-mode #user-input {
+            background-color: #252525;
+            border-color: #333;
+            color: #e0e0e0;
+        }
+        
+        .dark-mode .history-item:hover {
+            background-color: #333;
+        }
+        
+        .dark-mode .history-item.active {
+            background-color: rgba(110, 72, 170, 0.3);
+        }
+        
+        .dark-mode .model-info {
+            background-color: #252525;
+            border-left-color: var(--secondary);
+        }
+        
+        .dark-mode select {
+            background-color: #252525;
+            border-color: #333;
+            color: #e0e0e0;
+        }
+        
+        .dark-mode .sidebar-title {
+            border-bottom-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>AllOneAI Pro</h1>
+            <p class="subtitle">Plataforma profissional com todos os modelos de IA em um único lugar</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="chat-title">Conversa Atual</div>
+                    <div class="chat-actions">
+                        <button class="chat-btn" id="new-chat" title="Nova conversa">🆕</button>
+                        <button class="chat-btn" id="dark-mode" title="Modo Escuro">🌙</button>
+                        <button class="chat-btn" id="export-chat" title="Exportar conversa">📤</button>
+                    </div>
+                </div>
+                
+                <div class="chat-history" id="chat-history">
+                    <div class="message ai-message">
+                        <div>Olá! Eu sou o AllOneAI Pro. Escolha um modelo no menu à direita e comece a conversar!</div>
+                        <div class="message-time">Agora</div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Processando sua mensagem...</p>
+                </div>
+                
+                <div class="input-area">
+                    <textarea id="user-input" placeholder="Digite sua mensagem..." autocomplete="off" rows="1"></textarea>
+                    <button id="send-button">Enviar</button>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">🔧 Configurações</h3>
+                    <div class="model-selector">
+                        <select id="model-selector">
+                            <option value="">-- Selecione um Modelo --</option>
+                            <!-- Modelos serão adicionados dinamicamente via JavaScript -->
+                        </select>
+                        <div class="model-info" id="model-info">
+                            Selecione um modelo para ver sua descrição
+                        </div>
+                        <div class="model-stats" id="model-stats">
+                            <!-- Estatísticas serão adicionadas dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">📚 Histórico de Conversas</h3>
+                    <div class="conversation-history">
+                        <div id="history-list">
+                            <!-- Histórico será adicionado dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section pro-feature">
+                    <h3 class="sidebar-title">⚡ Recursos Pro</h3>
+                    <ul>
+                        <li>Suporte a todos os principais modelos de IA</li>
+                        <li>Histórico de conversas ilimitado</li>
+                        <li>Exportação de conversas em múltiplos formatos</li>
+                        <li>Modo escuro para melhor visualização</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        AllOneAI Pro &copy; 2023 - Plataforma avançada de inteligência artificial
+    </div>
+
+    <script src="https://js.puter.com/v2/"></script>
+    <script>
+        // Objeto com todos os modelos e suas descrições
+        const models = {
+            // 01-ai
+            "openrouter:01-ai/yi-large": {
+                name: "Yi Large",
+                description: "Modelo avançado da 01.AI com capacidade de processamento de linguagem natural em larga escala.",
+                stats: {
+                    context: "200K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            
+            // Aetherwiing
+            "openrouter:aetherwiing/mn-starcannon-12b": {
+                name: "MN Starcannon 12B",
+                description: "Modelo especializado em geração criativa de conteúdo e narrativas complexas.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Moderado",
+                    cost: "Baixo"
+                }
+            },
+            
+            // Agentica
+            "openrouter:agentica-org/deepcoder-14b-preview:free": {
+                name: "Deepcoder 14B",
+                description: "Especializado em programação e geração de código, com suporte a múltiplas linguagens.",
+                stats: {
+                    context: "4K tokens",
+                    speed: "Rápido",
+                    cost: "Grátis"
+                }
+            },
+            
+            // AI21
+            "openrouter:ai21/jamba-1.6-large": {
+                name: "Jamba 1.6 Large",
+                description: "Modelo versátil para diversas tarefas de processamento de linguagem natural.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:ai21/jamba-1.6-mini": {
+                name: "Jamba 1.6 Mini",
+                description: "Versão compacta do Jamba, ideal para respostas rápidas e eficientes.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Muito rápido",
+                    cost: "Baixo"
+                }
+            },
+            
+            // Aion Labs
+            "openrouter:aion-labs/aion-1.0": {
+                name: "Aion 1.0",
+                description: "Modelo geral com foco em compreensão contextual avançada.",
+                stats: {
+                    context: "32K tokens",
+                    speed: "Moderado",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:aion-labs/aion-1.0-mini": {
+                name: "Aion 1.0 Mini",
+                description: "Versão compacta do Aion 1.0 para tarefas mais simples.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Muito rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:aion-labs/aion-rp-llama-3.1-8b": {
+                name: "Aion RP Llama 3.1 8B",
+                description: "Modelo especializado em roleplay e narrativas interativas.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Rápido",
+                    cost: "Baixo"
+                }
+            },
+            
+            // Alfredpros
+            "openrouter:alfredpros/codellama-7b-instruct-solidity": {
+                name: "Codellama 7B Solidity",
+                description: "Especializado em programação blockchain e contratos inteligentes em Solidity.",
+                stats: {
+                    context: "4K tokens",
+                    speed: "Rápido",
+                    cost: "Baixo"
+                }
+            },
+            
+            // Alpindale
+            "openrouter:alpindale/goliath-120b": {
+                name: "Goliath 120B",
+                description: "Um dos maiores modelos disponíveis, com capacidade excepcional para tarefas complexas.",
+                stats: {
+                    context: "4K tokens",
+                    speed: "Lento",
+                    cost: "Alto"
+                }
+            },
+            "openrouter:alpindale/magnum-72b": {
+                name: "Magnum 72B",
+                description: "Modelo poderoso para análise e geração de texto avançada.",
+                stats: {
+                    context: "4K tokens",
+                    speed: "Moderado",
+                    cost: "Médio"
+                }
+            },
+            
+            // Amazon
+            "openrouter:amazon/nova-lite-v1": {
+                name: "Amazon Nova Lite",
+                description: "Versão leve do modelo da Amazon para tarefas gerais.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Muito rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:amazon/nova-micro-v1": {
+                name: "Amazon Nova Micro",
+                description: "Modelo compacto da Amazon para respostas rápidas.",
+                stats: {
+                    context: "4K tokens",
+                    speed: "Muito rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:amazon/nova-pro-v1": {
+                name: "Amazon Nova Pro",
+                description: "Versão avançada do modelo da Amazon com maior capacidade.",
+                stats: {
+                    context: "32K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            
+            // Anthropic (Claude)
+            "openrouter:anthropic/claude-2": {
+                name: "Claude 2",
+                description: "Modelo geral da Anthropic com foco em segurança e alinhamento.",
+                stats: {
+                    context: "100K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:anthropic/claude-2.0": {
+                name: "Claude 2.0",
+                description: "Versão estável do Claude com melhorias na coerência.",
+                stats: {
+                    context: "100K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:anthropic/claude-2.1": {
+                name: "Claude 2.1",
+                description: "Versão aprimorada do Claude 2 com melhor compreensão contextual.",
+                stats: {
+                    context: "100K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:anthropic/claude-3-haiku": {
+                name: "Claude 3 Haiku",
+                description: "Modelo rápido e eficiente da série Claude 3 para respostas concisas.",
+                stats: {
+                    context: "200K tokens",
+                    speed: "Muito rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:anthropic/claude-3-opus": {
+                name: "Claude 3 Opus",
+                description: "O modelo mais avançado da série Claude 3 para tarefas complexas.",
+                stats: {
+                    context: "200K tokens",
+                    speed: "Moderado",
+                    cost: "Alto"
+                }
+            },
+            "openrouter:anthropic/claude-3-sonnet": {
+                name: "Claude 3 Sonnet",
+                description: "Modelo balanceado da série Claude 3 com ótimo custo-benefício.",
+                stats: {
+                    context: "200K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:anthropic/claude-3.5-haiku": {
+                name: "Claude 3.5 Haiku",
+                description: "Versão atualizada do Haiku com melhor desempenho e eficiência.",
+                stats: {
+                    context: "200K tokens",
+                    speed: "Muito rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:anthropic/claude-3.5-sonnet": {
+                name: "Claude 3.5 Sonnet",
+                description: "Versão aprimorada do Sonnet com maior capacidade de raciocínio.",
+                stats: {
+                    context: "200K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            
+            // Arcee AI
+            "openrouter:arcee-ai/arcee-blitz": {
+                name: "Arcee Blitz",
+                description: "Modelo rápido para respostas instantâneas e tarefas simples.",
+                stats: {
+                    context: "4K tokens",
+                    speed: "Muito rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:arcee-ai/coder-large": {
+                name: "Arcee Coder Large",
+                description: "Modelo especializado em programação e análise de código.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            
+            // Baidu
+            "openrouter:baidu/ernie-4.5-300b-a47b": {
+                name: "Ernie 4.5",
+                description: "Modelo avançado da Baidu com foco em compreensão de linguagem chinesa e inglesa.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Moderado",
+                    cost: "Médio"
+                }
+            },
+            
+            // Cognitive Computations
+            "openrouter:cognitivecomputations/dolphin-mixtral-8x22b": {
+                name: "Dolphin Mixtral 8x22B",
+                description: "Modelo especializado em tarefas criativas e assistência geral.",
+                stats: {
+                    context: "32K tokens",
+                    speed: "Moderado",
+                    cost: "Médio"
+                }
+            },
+            
+            // Cohere
+            "openrouter:cohere/command-r": {
+                name: "Cohere Command R",
+                description: "Modelo avançado da Cohere para pesquisa e recuperação de informações.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:cohere/command-r-plus": {
+                name: "Cohere Command R+",
+                description: "Versão premium do Command R com maior capacidade de raciocínio.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Moderado",
+                    cost: "Alto"
+                }
+            },
+            
+            // Deepseek
+            "openrouter:deepseek/deepseek-chat": {
+                name: "Deepseek Chat",
+                description: "Modelo geral para conversação e assistência em diversas tarefas.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:deepseek/deepseek-prover-v2": {
+                name: "Deepseek Prover",
+                description: "Especializado em raciocínio lógico e provas matemáticas.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Moderado",
+                    cost: "Médio"
+                }
+            },
+            
+            // Google
+            "openrouter:google/gemini-2.0-flash-001": {
+                name: "Gemini 2.0 Flash",
+                description: "Modelo rápido da Google para respostas instantâneas.",
+                stats: {
+                    context: "1M tokens",
+                    speed: "Muito rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:google/gemini-2.5-pro": {
+                name: "Gemini 2.5 Pro",
+                description: "Versão avançada do Gemini com maior capacidade de compreensão.",
+                stats: {
+                    context: "1M tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:google/gemma-2-27b-it": {
+                name: "Gemma 2 27B",
+                description: "Modelo de código aberto da Google para diversas aplicações.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Rápido",
+                    cost: "Baixo"
+                }
+            },
+            
+            // Meta (Llama)
+            "openrouter:meta-llama/llama-3-70b-instruct": {
+                name: "Llama 3 70B",
+                description: "Um dos modelos mais avançados da série Llama 3 para instruções complexas.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Moderado",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:meta-llama/llama-3-8b-instruct": {
+                name: "Llama 3 8B",
+                description: "Versão mais leve do Llama 3 ainda com bom desempenho.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:meta-llama/llama-3.1-70b-instruct": {
+                name: "Llama 3.1 70B",
+                description: "Versão atualizada do Llama 3 com melhorias na compreensão.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Moderado",
+                    cost: "Médio"
+                }
+            },
+            
+            // Microsoft
+            "openrouter:microsoft/phi-3-medium-128k-instruct": {
+                name: "Phi-3 Medium",
+                description: "Modelo balanceado da Microsoft para diversas tarefas.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:microsoft/phi-4": {
+                name: "Phi-4",
+                description: "Modelo avançado da Microsoft com grande capacidade de raciocínio.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Moderado",
+                    cost: "Médio"
+                }
+            },
+            
+            // Mistral
+            "openrouter:mistralai/mistral-7b-instruct": {
+                name: "Mistral 7B",
+                description: "Modelo eficiente para instruções e tarefas gerais.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:mistralai/mistral-large": {
+                name: "Mistral Large",
+                description: "Modelo avançado da Mistral com excelente desempenho.",
+                stats: {
+                    context: "32K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:mistralai/mixtral-8x7b-instruct": {
+                name: "Mixtral 8x7B",
+                description: "Modelo de mistura de especialistas com ótimo custo-benefício.",
+                stats: {
+                    context: "32K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            
+            // OpenAI
+            "openrouter:openai/gpt-3.5-turbo-16k": {
+                name: "GPT-3.5 Turbo",
+                description: "Modelo rápido e eficiente da OpenAI para diversas tarefas.",
+                stats: {
+                    context: "16K tokens",
+                    speed: "Muito rápido",
+                    cost: "Baixo"
+                }
+            },
+            "openrouter:openai/gpt-4": {
+                name: "GPT-4",
+                description: "Modelo avançado da OpenAI com maior capacidade de raciocínio.",
+                stats: {
+                    context: "8K tokens",
+                    speed: "Moderado",
+                    cost: "Alto"
+                }
+            },
+            "openrouter:openai/gpt-4-turbo": {
+                name: "GPT-4 Turbo",
+                description: "Versão otimizada do GPT-4 com melhor desempenho.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:openai/gpt-4o": {
+                name: "GPT-4o",
+                description: "Modelo mais recente da OpenAI com multimodalidade e melhor desempenho.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Muito rápido",
+                    cost: "Médio"
+                }
+            },
+            
+            // Outros modelos importantes
+            "openrouter:openrouter/auto": {
+                name: "Auto (OpenRouter)",
+                description: "Permite que o OpenRouter selecione automaticamente o melhor modelo para sua tarefa.",
+                stats: {
+                    context: "Varia",
+                    speed: "Varia",
+                    cost: "Varia"
+                }
+            },
+            "openrouter:perplexity/sonar-large": {
+                name: "Sonar Large",
+                description: "Modelo avançado da Perplexity para pesquisa e respostas precisas.",
+                stats: {
+                    context: "128K tokens",
+                    speed: "Rápido",
+                    cost: "Médio"
+                }
+            },
+            "openrouter:qwen/qwen-2-72b-instruct": {
+                name: "Qwen 2 72B",
+                description: "Modelo avançado da Alibaba para diversas tarefas de linguagem.",
+                stats: {
+                    context: "32K tokens",
+                    speed: "Moderado",
+                    cost: "Médio"
+                }
+            }
+        };
+
+        // Variáveis globais
+        let currentModel = "";
+        let conversationHistory = [];
+        let currentConversation = [];
+        let isDarkMode = false;
+        
+        // Inicialização do DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preencher o seletor de modelos
+            const modelSelector = document.getElementById('model-selector');
+            const modelInfo = document.getElementById('model-info');
+            const modelStats = document.getElementById('model-stats');
+            
+            // Agrupar modelos por provedor
+            const providers = {};
+            for (const [id, data] of Object.entries(models)) {
+                const provider = id.split(':')[1].split('/')[0];
+                if (!providers[provider]) {
+                    providers[provider] = [];
+                }
+                providers[provider].push({id, ...data});
+            }
+            
+            // Adicionar modelos ao seletor
+            for (const [provider, models] of Object.entries(providers)) {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = provider;
+                
+                models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.id;
+                    option.textContent = model.name;
+                    optgroup.appendChild(option);
+                });
+                
+                modelSelector.appendChild(optgroup);
+            }
+            
+            // Event listener para seleção de modelo
+            modelSelector.addEventListener('change', function() {
+                currentModel = this.value;
+                const modelData = models[currentModel];
+                
+                if (modelData) {
+                    modelInfo.innerHTML = `<strong>${modelData.name}</strong><br>${modelData.description}`;
+                    
+                    // Atualizar estatísticas do modelo
+                    modelStats.innerHTML = `
+                        <div class="stat-item">
+                            <span class="stat-icon">📏</span>
+                            <span>${modelData.stats.context}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">⚡</span>
+                            <span>${modelData.stats.speed}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">💰</span>
+                            <span>${modelData.stats.cost}</span>
+                        </div>
+                    `;
+                    
+                    // Adicionar mensagem inicial quando um modelo é selecionado
+                    if (currentConversation.length === 0) {
+                        addMessage(`Agora você está conversando com ${modelData.name}. Como posso ajudar?`, 'ai');
+                    }
+                    
+                    // Salvar modelo selecionado
+                    localStorage.setItem('alloneai_selected_model', currentModel);
+                } else {
+                    modelInfo.textContent = "Selecione um modelo para ver sua descrição";
+                    modelStats.innerHTML = '';
+                }
+            });
+            
+            // Event listener para enviar mensagem
+            const sendButton = document.getElementById('send-button');
+            const userInput = document.getElementById('user-input');
+            
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Auto-ajustar altura do textarea
+            userInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Botão nova conversa
+            document.getElementById('new-chat').addEventListener('click', newConversation);
+            
+            // Botão modo escuro
+            document.getElementById('dark-mode').addEventListener('click', toggleDarkMode);
+            
+            // Botão exportar conversa
+            document.getElementById('export-chat').addEventListener('click', exportConversation);
+            
+            // Carregar configurações salvas
+            loadSettings();
+            
+            // Carregar histórico de conversas do localStorage
+            loadConversationHistory();
+            
+            // Carregar modelo selecionado anteriormente
+            const savedModel = localStorage.getItem('alloneai_selected_model');
+            if (savedModel && models[savedModel]) {
+                modelSelector.value = savedModel;
+                modelSelector.dispatchEvent(new Event('change'));
+            }
+        });
+        
+        // Função para enviar mensagem
+        function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const message = userInput.value.trim();
+            
+            if (!message) return;
+            if (!currentModel) {
+                alert("Por favor, selecione um modelo primeiro");
+                return;
+            }
+            
+            // Adicionar mensagem do usuário ao chat
+            addMessage(message, 'user');
+            userInput.value = '';
+            userInput.style.height = 'auto';
+            
+            // Mostrar indicador de digitação
+            const typingIndicator = document.getElementById('typing-indicator');
+            typingIndicator.style.display = 'block';
+            
+            // Adicionar mensagem ao histórico da conversa atual
+            currentConversation.push({role: 'user', content: message, timestamp: new Date().toISOString()});
+            
+            // Enviar toda a conversa para a API
+            puter.ai.chat(currentConversation.map(msg => ({role: msg.role, content: msg.content})), {model: currentModel})
+                .then(response => {
+                    // Adicionar resposta ao chat
+                    addMessage(response, 'ai');
+                    
+                    // Adicionar resposta ao histórico da conversa atual
+                    currentConversation.push({role: 'assistant', content: response, timestamp: new Date().toISOString()});
+                    
+                    // Salvar conversa no histórico
+                    saveConversation();
+                    
+                    // Enviar histórico para a API do Puter
+                    sendConversationToAPI();
+                })
+                .catch(error => {
+                    console.error("Erro na API:", error);
+                    addMessage("Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.", 'ai');
+                })
+                .finally(() => {
+                    typingIndicator.style.display = 'none';
+                });
+        }
+        
+        // Função para enviar histórico para a API do Puter
+        function sendConversationToAPI() {
+            // Criar um resumo da conversa para enviar
+            const conversationSummary = {
+                model: currentModel,
+                messages: currentConversation.map(msg => ({
+                    role: msg.role,
+                    content: msg.content.substring(0, 200) // Enviar apenas o início da mensagem
+                })),
+                timestamp: new Date().toISOString()
+            };
+            
+            // Usar a API do Puter para armazenar o histórico
+            puter.storage.set('alloneai_conversation_history', JSON.stringify(conversationSummary))
+                .catch(error => {
+                    console.error("Erro ao salvar no Puter:", error);
+                });
+        }
+        
+        // Função para adicionar mensagem ao chat
+        function addMessage(text, sender) {
+            const chatHistory = document.getElementById('chat-history');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'ai-message');
+            
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            messageDiv.innerHTML = `
+                <div>${text}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+        
+        // Função para salvar conversa no histórico
+        function saveConversation() {
+            if (currentConversation.length === 0) return;
+            
+            const conversation = {
+                id: Date.now(),
+                model: currentModel,
+                title: currentConversation[0].content.substring(0, 30) + (currentConversation[0].content.length > 30 ? "..." : ""),
+                messages: [...currentConversation],
+                timestamp: new Date().toISOString()
+            };
+            
+            // Adicionar ao histórico
+            conversationHistory.unshift(conversation);
+            
+            // Manter apenas as últimas 50 conversas
+            if (conversationHistory.length > 50) {
+                conversationHistory = conversationHistory.slice(0, 50);
+            }
+            
+            // Salvar no localStorage
+            localStorage.setItem('alloneai_conversations', JSON.stringify(conversationHistory));
+            
+            // Atualizar lista de histórico
+            updateHistoryList();
+        }
+        
+        // Função para carregar histórico do localStorage
+        function loadConversationHistory() {
+            const saved = localStorage.getItem('alloneai_conversations');
+            if (saved) {
+                conversationHistory = JSON.parse(saved);
+                updateHistoryList();
+            }
+        }
+        
+        // Função para atualizar a lista de histórico
+        function updateHistoryList() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            
+            if (conversationHistory.length === 0) {
+                historyList.innerHTML = '<div style="padding: 10px; color: #666;">Nenhuma conversa salva</div>';
+                return;
+            }
+            
+            conversationHistory.forEach(conv => {
+                const item = document.createElement('div');
+                item.classList.add('history-item');
+                if (currentConversation.length > 0 && conv.id === currentConversation[0].id) {
+                    item.classList.add('active');
+                }
+                
+                const time = new Date(conv.timestamp).toLocaleString([], {
+                    day: 'numeric', 
+                    month: 'numeric', 
+                    year: 'numeric', 
+                    hour: '2-digit', 
+                    minute:'2-digit'
+                });
+                
+                item.innerHTML = `
+                    <strong>${conv.title}</strong>
+                    <small>${models[conv.model]?.name || conv.model} • ${time}</small>
+                `;
+                
+                item.addEventListener('click', () => {
+                    loadConversation(conv);
+                });
+                
+                historyList.appendChild(item);
+            });
+        }
+        
+        // Função para carregar uma conversa do histórico
+        function loadConversation(conversation) {
+            const chatHistory = document.getElementById('chat-history');
+            chatHistory.innerHTML = '';
+            
+            currentConversation = [...conversation.messages];
+            currentModel = conversation.model;
+            
+            // Atualizar seletor de modelo
+            document.getElementById('model-selector').value = currentModel;
+            document.getElementById('model-info').innerHTML = `
+                <strong>${models[currentModel]?.name || currentModel}</strong><br>
+                ${models[currentModel]?.description || 'Sem descrição disponível'}
+            `;
+            
+            // Atualizar estatísticas do modelo
+            const modelStats = document.getElementById('model-stats');
+            if (models[currentModel]?.stats) {
+                modelStats.innerHTML = `
+                    <div class="stat-item">
+                        <span class="stat-icon">📏</span>
+                        <span>${models[currentModel].stats.context}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">⚡</span>
+                        <span>${models[currentModel].stats.speed}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">💰</span>
+                        <span>${models[currentModel].stats.cost}</span>
+                    </div>
+                `;
+            } else {
+                modelStats.innerHTML = '';
+            }
+            
+            // Mostrar todas as mensagens da conversa
+            currentConversation.forEach(msg => {
+                addMessage(msg.content, msg.role === 'user' ? 'user' : 'ai');
+            });
+            
+            // Atualizar lista de histórico para destacar a conversa atual
+            updateHistoryList();
+        }
+        
+        // Função para nova conversa
+        function newConversation() {
+            if (currentConversation.length > 0) {
+                if (!confirm("Deseja iniciar uma nova conversa? A conversa atual será salva.")) {
+                    return;
+                }
+            }
+            
+            currentConversation = [];
+            document.getElementById('chat-history').innerHTML = '';
+            
+            if (currentModel) {
+                addMessage(`Nova conversa com ${models[currentModel].name}. Como posso ajudar?`, 'ai');
+            } else {
+                addMessage("Nova conversa iniciada. Selecione um modelo para começar.", 'ai');
+            }
+            
+            // Atualizar lista de histórico
+            updateHistoryList();
+        }
+        
+        // Função para alternar modo escuro
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            localStorage.setItem('alloneai_dark_mode', isDarkMode);
+            
+            // Atualizar ícone do botão
+            const darkModeBtn = document.getElementById('dark-mode');
+            darkModeBtn.textContent = isDarkMode ? '☀️' : '🌙';
+            darkModeBtn.title = isDarkMode ? 'Modo Claro' : 'Modo Escuro';
+        }
+        
+        // Função para carregar configurações
+        function loadSettings() {
+            // Carregar modo escuro
+            const savedDarkMode = localStorage.getItem('alloneai_dark_mode');
+            if (savedDarkMode === 'true') {
+                toggleDarkMode(); // Isso vai ativar o modo escuro
+            }
+        }
+        
+        // Função para exportar conversa
+        function exportConversation() {
+            if (currentConversation.length === 0) {
+                alert("Nenhuma conversa para exportar");
+                return;
+            }
+            
+            const exportData = {
+                title: `Conversa com ${models[currentModel]?.name || currentModel}`,
+                model: currentModel,
+                date: new Date().toISOString(),
+                messages: currentConversation
+            };
+            
+            // Criar JSON para download
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            
+            const exportName = `alloneai_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportName);
+            linkElement.click();
+        }
+    </script>
+</body>
+</html>
